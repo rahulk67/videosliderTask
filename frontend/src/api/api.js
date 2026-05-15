@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: 'http://localhost:5000/api' });
+const api = axios.create({ baseURL: 'https://task-server-lac-mu.vercel.app/api' });
 
 export const fetchVideos = (page = 1, limit = 30) =>
   api.get(`/videos?page=${page}&limit=${limit}`).then(r => r.data);
