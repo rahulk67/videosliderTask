@@ -1,7 +1,10 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useRef } from "react";
 import VideoPlayer from "./VideoPlayer";
 import VideoPlayerSwiper from "./VideoPlayerSwiper";
+
+import {isMobile} from "react-device-detect";
+
 
 export default function InnerSlider({
   videos,
@@ -40,7 +43,76 @@ export default function InnerSlider({
     }
   };
 
+  const touchStartY = useRef(0);
+const touchEndY = useRef(0);
+
+const handleTouchStart = (e) => {
+  touchStartY.current = e.touches[0].clientY;
+};
+
+const handleTouchMove = (e) => {
+  touchEndY.current = e.touches[0].clientY;
+};
+
+const handleTouchEnd = () => {
+
+  const distance =
+    touchStartY.current - touchEndY.current;
+
+  // swipe up
+  if (distance > 50) {
+    handleNext();
+  }
+
+  // swipe down
+  if (distance < -50) {
+    handlePrev();
+  }
+};
+
+console.log("isMobile", isMobile);
+
+  if (isMobile) {
   return (
+    <div className="mobile-reels-wrapper" onTouchStart={handleTouchStart}
+  onTouchMove={handleTouchMove}
+  onTouchEnd={handleTouchEnd}>
+
+      <button className="close-btn" onClick={onClose}>
+        ✕
+      </button>
+
+      <div
+        className="mobile-reels-container"
+        style={{
+          transform: `translateY(-${currentIndex * 100}vh)`,
+        }}
+      >
+
+        {videos.map((video, index) => (
+          <div
+            key={video.id}
+            className="mobile-reel-slide"
+          >
+
+            <VideoPlayer
+              video={video}
+              isActive={currentIndex === index}
+            />
+
+          </div>
+        ))}
+
+      </div>
+
+    </div>
+  );
+}
+
+
+
+  return (
+    
     <div className="inner-slider-overlay">
 
       <button className="close-btn" onClick={onClose}>
